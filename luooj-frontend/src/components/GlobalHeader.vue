@@ -1,5 +1,5 @@
 <template>
-  <a-row class="globalHeader" style="margin-bottom: 16px" align="center">
+  <a-row class="globalHeader" align="center" :wrap="false">
     <a-col flex="auto">
       <a-menu
         mode="horizontal"
@@ -16,7 +16,7 @@
             <div class="title">珞 OJ</div>
           </div>
         </a-menu-item>
-        <a-menu-item v-for="item in routes" :key="item.path">
+        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
           {{ item.name }}
         </a-menu-item>
       </a-menu>
@@ -30,19 +30,31 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import { checkAccess } from "@/access/checkAccess";
+import { ACCESS_ENUM } from "@/access/accessEnum";
 
 const router = useRouter();
-const selectKeys = ref(["/"]);
-
 const store = useStore();
+
+// 导航栏菜单展示
+const visibleRoutes = computed(() => {
+  return routes.filter((item) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    // 根据用户权限过滤菜单
+    return checkAccess(store.state.user.loginUser, item.meta?.access as string);
+  });
+});
+const selectKeys = ref(["/"]);
 
 // 3s后自动变为‘鱼皮’
 setTimeout(() => {
   store.dispatch("getLoginUser", {
-    username: "鱼皮",
-    userRole: "admin",
+    username: "小马",
+    userRole: ACCESS_ENUM.ADMIN,
   });
 }, 3000);
 
@@ -69,7 +81,8 @@ const doMenuClick = (key: string) => {
 }
 
 .title {
-  color: #444;
+  color: #439fb7;
+  font-size: large;
   margin-left: 16px;
 }
 </style>
