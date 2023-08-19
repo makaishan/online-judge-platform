@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <BasicLayout />
+    <template v-if="route.path.startsWith('/user')">
+      <router-view />
+    </template>
+    <template v-else>
+      <BasicLayout />
+    </template>
   </div>
 </template>
 
@@ -10,10 +15,10 @@
 </style>
 <script setup lang="ts">
 import BasicLayout from "@/layouts/BasicLayout.vue";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { onMounted } from "vue";
-import { ACCESS_ENUM } from "@/access/accessEnum";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 onMounted(() => {
   doInit();
@@ -24,17 +29,4 @@ onMounted(() => {
 const doInit = () => {
   console.log("init");
 };
-
-const router = useRouter();
-const store = useStore();
-router.beforeEach((to, from, next) => {
-  // 仅管理员可见，判断是否有管理员权限
-  if (to.meta?.access === ACCESS_ENUM.ADMIN) {
-    if (store.state.user.loginUser?.userRole !== ACCESS_ENUM.ADMIN) {
-      next("/noAuth");
-      return;
-    }
-  }
-  next();
-});
 </script>

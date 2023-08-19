@@ -22,7 +22,7 @@
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <div>{{ store.state.user?.loginUser?.username ?? "未登录" }}</div>
+      <div>{{ store.state.user?.loginUser?.userName ?? "未登录" }}</div>
     </a-col>
   </a-row>
 </template>
@@ -49,14 +49,6 @@ const visibleRoutes = computed(() => {
   });
 });
 const selectKeys = ref(["/"]);
-
-// 3s后自动变为‘鱼皮’
-setTimeout(() => {
-  store.dispatch("getLoginUser", {
-    username: "小马",
-    userRole: ACCESS_ENUM.ADMIN,
-  });
-}, 3000);
 
 //路由跳转后，更新选中的菜单项
 router.afterEach((to) => {
