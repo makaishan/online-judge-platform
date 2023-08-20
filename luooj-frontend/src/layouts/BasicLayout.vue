@@ -40,4 +40,8 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
   right: 0;
   text-align: center;
 }
+#basicLayout a {
+  text-decoration: none;
+  color: black;
+}
 </style>

@@ -34,4 +34,8 @@
   right: 0;
   text-align: center;
 }
+#userLayout a {
+  text-decoration: none;
+  color: white;
+}
 </style>

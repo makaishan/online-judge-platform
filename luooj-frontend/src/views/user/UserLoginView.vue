@@ -12,7 +12,7 @@
             class="form"
           >
             <span
-              style="font-size: 20px; font-weight: bolder; margin-bottom: 20px"
+              style="font-size: 40px; font-weight: bolder; margin-bottom: 50px"
               >用户登录</span
             >
             <a-form-item field="userAccount" label="账号">
@@ -24,8 +24,14 @@
                 placeholder="请输入密码"
               />
             </a-form-item>
-            <a-form-item>
-              <a-button html-type="submit" type="primary">立即登录</a-button>
+            <div style="display: grid; grid-template-columns: auto auto">
+              <span style="text-align: left; margin-left: 45px"
+                >没有账号？立即注册</span
+              >
+              <span style="text-align: right">忘记密码？</span>
+            </div>
+            <a-form-item style="margin-top: 20px; margin-left: 150px">
+              <a-button html-type="submit" type="primary">立即登录 </a-button>
             </a-form-item>
           </a-form>
         </div>
@@ -77,9 +83,11 @@ const handleSubmit = async () => {
   width: 1000px;
   height: 500px;
 }
+
 #userLogin .card-content .card-left {
-  background: red;
-  width: 480px;
+  background: url("../../assets/login-card.jpg");
+  width: 470px;
+  height: 470px;
   margin: 0;
 }
 

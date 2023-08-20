@@ -6,7 +6,7 @@ export default {
   namespace: true,
   state: () => ({
     loginUser: {
-      username: "未登录",
+      userName: "未登录",
     },
   }),
   actions: {
