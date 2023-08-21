@@ -1,9 +1,15 @@
 package com.mks.luooj.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mks.luooj.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.mks.luooj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.mks.luooj.model.entity.QuestionSubmit;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mks.luooj.model.entity.User;
+import com.mks.luooj.model.vo.QuestionSubmitVO;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author lenovo-mr
@@ -20,5 +26,31 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      * @return int
      */
     long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser);
+
+    /**
+     * 获取查询条件
+     *
+     * @param questionSubmitQueryRequest questionQueryRequest
+     * @return QueryWrapper<QuestionSubmit>
+     */
+    QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest);
+
+    /**
+     * 获取题目提交封装
+     *
+     * @param questionSubmit questionSubmit
+     * @param loginUser loginUser
+     * @return QuestionSubmitVO
+     */
+    QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser);
+
+    /**
+     * 分页获取题目提交封装
+     *
+     * @param questionSubmitPage questionSubmitPage
+     * @param loginUser loginUser
+     * @return Page<QuestionSubmitVO>
+     */
+    Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage, User loginUser);
 
 }
