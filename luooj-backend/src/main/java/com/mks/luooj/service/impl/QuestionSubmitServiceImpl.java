@@ -14,8 +14,6 @@ import com.mks.luooj.model.entity.Question;
 import com.mks.luooj.model.enums.QuestionSubmitStatusEnum;
 import com.mks.luooj.model.enums.QuestionSubmitLanguageEnum;
 import com.mks.luooj.model.vo.QuestionSubmitVO;
-import com.mks.luooj.model.vo.QuestionVO;
-import com.mks.luooj.model.vo.UserVO;
 import com.mks.luooj.service.QuestionSubmitService;
 import com.mks.luooj.service.QuestionService;
 import com.mks.luooj.mapper.QuestionSubmitMapper;
@@ -28,11 +26,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -85,9 +80,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         Long questionSubmitId = questionSubmit.getId();
         // 异步调用判题服务区判题
-        CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
-        });
+        CompletableFuture.runAsync(() -> judgeService.doJudge(questionSubmitId));
         return questionSubmitId;
     }
 
