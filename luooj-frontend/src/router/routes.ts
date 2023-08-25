@@ -1,17 +1,18 @@
 import { RouteRecordRaw } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
-import AboutView from "@/views/AboutView.vue";
-import AdminView from "@/views/AdminView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 import { ACCESS_ENUM } from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
+import AddQuestionView from "@/views/question/AddQuestionView.vue";
+import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
+import QuestionsView from "@/views/question/QuestionsView.vue";
+import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: "/questions",
   },
   {
     path: "/user",
@@ -34,22 +35,41 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/home",
+    path: "/questions",
     name: "浏览题目",
-    component: HomeView,
+    component: QuestionsView,
   },
   {
-    path: "/hide",
-    name: "隐藏页面",
-    component: HomeView,
+    path: "/view/question/:id",
+    name: "在线做题",
+    component: ViewQuestionView,
+    props: true,
     meta: {
+      access: ACCESS_ENUM.USER,
       hideInMenu: true,
     },
   },
   {
-    path: "/admin",
-    name: "仅管理员可见",
-    component: AdminView,
+    path: "/add/question",
+    name: "添加题目",
+    component: AddQuestionView,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
+    path: "/update/question",
+    name: "更新题目",
+    component: AddQuestionView,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/manage/question",
+    name: "管理题目",
+    component: ManageQuestionView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
     },
@@ -61,10 +81,5 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       hideInMenu: true,
     },
-  },
-  {
-    path: "/about",
-    name: "关于我的",
-    component: AboutView,
   },
 ];
