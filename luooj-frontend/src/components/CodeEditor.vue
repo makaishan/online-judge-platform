@@ -30,29 +30,17 @@ const props = withDefaults(defineProps<Props>(), {
 const codeEditorRef = ref();
 const codeEditor = ref();
 
-// watch(
-//   () => props.language,
-//   () => {
-//     codeEditor.value = monaco.editor.create(codeEditorRef.value, {
-//       value: props.value,
-//       language: props.language,
-//       theme: "vs-dark",
-//       automaticLayout: true,
-//       minimap: {
-//         enabled: true,
-//         renderCharacters: true,
-//       },
-//       selectOnLineNumbers: true, //显示行号
-//       roundedSelection: false,
-//       readOnly: false, // 只读
-//       cursorStyle: "line", //光标样式
-//       glyphMargin: true, //字形边缘
-//       useTabStops: false,
-//       fontSize: 15, //字体大小
-//       quickSuggestionsDelay: 100, //代码提示延时
-//     });
-//   }
-// );
+watch(
+  () => props.language,
+  () => {
+    if (codeEditor.value) {
+      monaco.editor.setModelLanguage(
+        toRaw(codeEditor.value).getModel(),
+        props.language
+      );
+    }
+  }
+);
 
 onMounted(() => {
   if (!codeEditorRef.value) {
