@@ -2,9 +2,12 @@ package com.mks.luooj.codesandbox.utils;
 
 import cn.hutool.core.util.StrUtil;
 import com.mks.luooj.codesandbox.model.entity.ExecuteMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.StopWatch;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProcessUtil {
 
@@ -27,12 +30,12 @@ public class ProcessUtil {
                 System.out.println(opName + "成功");
                 // 获取进程正常输出
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
-                StringBuilder compileOutputBuilder = new StringBuilder();
+                List<String> outputStrList = new ArrayList<>();
                 String compileOutputLine;
                 while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                    compileOutputBuilder.append(compileOutputLine).append("\n");
+                    outputStrList.add(compileOutputLine);
                 }
-                executeMessage.setMessage(compileOutputBuilder.toString());
+                executeMessage.setMessage(StringUtils.join(outputStrList, "\n"));
                 //停止计时
                 stopWatch.stop();
                 long lastTaskTimeMillis = stopWatch.getLastTaskTimeMillis();
@@ -49,12 +52,12 @@ public class ProcessUtil {
                 executeMessage.setMessage(compileOutputBuilder.toString());
                 // 获取进程错误输出
                 BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(runProcess.getErrorStream()));
-                StringBuilder errorCompileOutputBuilder = new StringBuilder();
+                List<String> errorOutputStrList = new ArrayList<>();
                 String errorCompileOutputLine;
-                while ((errorCompileOutputLine = errorBufferedReader.readLine()) != null) {
-                    errorCompileOutputBuilder.append(errorCompileOutputLine).append("\n");
+                while ((errorCompileOutputLine = bufferedReader.readLine()) != null) {
+                    errorOutputStrList.add(errorCompileOutputLine);
                 }
-                executeMessage.setErrorMessage(errorCompileOutputBuilder.toString());
+                executeMessage.setMessage(StringUtils.join(errorOutputStrList, "\n"));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -86,11 +89,12 @@ public class ProcessUtil {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder compileOutputBuilder = new StringBuilder();
             // 逐行读取
+            List<String> outputStrList = new ArrayList<>();
             String compileOutputLine;
             while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                compileOutputBuilder.append(compileOutputLine);
+                outputStrList.add(compileOutputLine);
             }
-            executeMessage.setMessage(compileOutputBuilder.toString());
+            executeMessage.setMessage(StringUtils.join(outputStrList, "\n"));
             // 释放资源
             outputStreamWriter.close();
             outputStream.close();
