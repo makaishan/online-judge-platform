@@ -5,6 +5,7 @@ import com.mks.luooj.codesandbox.model.entity.ExecuteCodeRequest;
 import com.mks.luooj.codesandbox.model.entity.ExecuteCodeResponse;
 import com.mks.luooj.codesandbox.model.entity.ExecuteMessage;
 import com.mks.luooj.codesandbox.model.entity.JudgeInfo;
+import com.mks.luooj.codesandbox.model.enums.JudgeInfoMessageEnum;
 import com.mks.luooj.codesandbox.utils.ProcessUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,25 +37,25 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         File userCodeFile = saveFile(code);
         if (userCodeFile == null) {
             log.error("create file error.");
-            return getErrorResponse(new RuntimeException("create file error."));
+            return getErrorResponse("create file error.", JudgeInfoMessageEnum.SYSTEM_ERROR);
         }
         // 2.编译代码得到class文件
         ExecuteMessage executeMessage = compileFile(userCodeFile);
-        if (executeMessage == null) {
+        if (executeMessage == null || StringUtils.isNotBlank(executeMessage.getErrorMessage())) {
             log.error("compile error.");
-            return getErrorResponse(new RuntimeException("compile error."));
+            return getErrorResponse("compile error", JudgeInfoMessageEnum.COMPILE_ERROR);
         }
         // 3.执行代码，得到输出结果
         List<ExecuteMessage> executeMessageList = runFile(userCodeFile, inputList);
         if (executeMessageList == null || executeMessageList.size() == 0) {
             log.error("execute code error.");
-            return getErrorResponse(new RuntimeException("execute code error."));
+            return getErrorResponse("execute code error.", JudgeInfoMessageEnum.RUNTIME_ERROR);
         }
         // 4.得到输出结果响应
         ExecuteCodeResponse outputResponse = getOutputResponse(executeMessageList);
         if (outputResponse == null) {
             log.error("get output error.");
-            return getErrorResponse(new RuntimeException("get output error."));
+            return getErrorResponse("get output error.", JudgeInfoMessageEnum.SYSTEM_ERROR);
         }
         // 5.删除文件
         boolean deleteFile = deleteFile(userCodeFile);
@@ -93,7 +94,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
             Process compileProcess = Runtime.getRuntime().exec(compileCmd);
             ExecuteMessage executeMessage = ProcessUtil.runProcessAndGetMessage(compileProcess, "编译");
             if (executeMessage.getExitValue() != 0) {
-                throw new RuntimeException("编译错误");
+                executeMessage.setErrorMessage("编译错误");
             }
             return executeMessage;
         } catch (Exception e) {
@@ -191,15 +192,16 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
     /**
      * 获取错误响应
      *
-     * @param e 错误
+     * @param errorMessage 错误信息
      * @return ExecuteCodeResponse
      */
-    public ExecuteCodeResponse getErrorResponse(Throwable e) {
+    public ExecuteCodeResponse getErrorResponse(String errorMessage, JudgeInfoMessageEnum judgeInfoMessageEnum) {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
         executeCodeResponse.setOutputList(new ArrayList<>());
-        executeCodeResponse.setMessage(e.getMessage());
-        executeCodeResponse.setStatus(2);
-        executeCodeResponse.setJudgeInfo(new JudgeInfo());
+        executeCodeResponse.setMessage(errorMessage);
+        JudgeInfo judgeInfo = new JudgeInfo();
+        judgeInfo.setMessage(judgeInfoMessageEnum.getValue());
+        executeCodeResponse.setJudgeInfo(judgeInfo);
         return executeCodeResponse;
     }
 }

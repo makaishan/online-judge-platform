@@ -15,6 +15,7 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy{
     @Override
     public JudgeInfo doJudge(JudgeContext judgeContext) {
         JudgeInfo judgeInfo = judgeContext.getJudgeInfo();
+        String message = judgeInfo.getMessage();
         Long memory = judgeInfo.getMemory();
         Long time = judgeInfo.getTime();
         List<String> inputList = judgeContext.getInputList();
@@ -27,7 +28,19 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy{
         JudgeInfo judgeInfoResponse = new JudgeInfo();
         judgeInfoResponse.setMemory(memory);
         judgeInfoResponse.setTime(time);
-        // 先判断输出结果是否与输入用例数量相同
+        // 判断程序是否编译成功
+        if(message.equals(JudgeInfoMessageEnum.COMPILE_ERROR.getValue())){
+            judgeInfoMessageEnum = JudgeInfoMessageEnum.COMPILE_ERROR;
+            judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
+            return judgeInfoResponse;
+        }
+        // 判断程序是否运行成功
+        if(message.equals(JudgeInfoMessageEnum.RUNTIME_ERROR.getValue())){
+            judgeInfoMessageEnum = JudgeInfoMessageEnum.RUNTIME_ERROR;
+            judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
+            return judgeInfoResponse;
+        }
+        // 判断输出结果是否与输入用例数量相同
         if(outputList.size() != inputList.size()) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
             judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());

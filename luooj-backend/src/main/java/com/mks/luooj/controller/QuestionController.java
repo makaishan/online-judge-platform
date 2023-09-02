@@ -11,10 +11,15 @@ import com.mks.luooj.constant.UserConstant;
 import com.mks.luooj.exception.BusinessException;
 import com.mks.luooj.exception.ThrowUtils;
 import com.mks.luooj.model.dto.question.*;
+import com.mks.luooj.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.mks.luooj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.mks.luooj.model.entity.Question;
+import com.mks.luooj.model.entity.QuestionSubmit;
 import com.mks.luooj.model.entity.User;
+import com.mks.luooj.model.vo.QuestionSubmitVO;
 import com.mks.luooj.model.vo.QuestionVO;
 import com.mks.luooj.service.QuestionService;
+import com.mks.luooj.service.QuestionSubmitService;
 import com.mks.luooj.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +46,9 @@ public class QuestionController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private QuestionSubmitService questionSubmitService;
 
     private final static Gson GSON = new Gson();
 
@@ -285,6 +293,43 @@ public class QuestionController {
         }
         boolean result = questionService.updateById(question);
         return ResultUtils.success(result);
+    }
+
+
+    /**
+     * 提交题目
+     *
+     * @param questionSubmitAddRequest questionSubmitAddRequest
+     * @param request request
+     * @return resultNum 本次点赞变化数
+     */
+    @PostMapping("/question_submit/do")
+    public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
+                                               HttpServletRequest request) {
+        if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 登录才能点赞
+        final User loginUser = userService.getLoginUser(request);
+        long result = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 分页获取题目提交列表（仅管理员可查看全部信息，普通用户只能查看非代码、答案等公开信息）
+     *
+     * @param questionSubmitQueryRequest questionQueryRequest
+     * @return BaseResponse<Page<Question>>
+     */
+    @PostMapping("/question_submit/list/page")
+    public BaseResponse<Page<QuestionSubmitVO>> listQuestionSubmitByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest, HttpServletRequest request) {
+        long current = questionSubmitQueryRequest.getCurrent();
+        long size = questionSubmitQueryRequest.getPageSize();
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size),
+                questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
+        //根据权限脱敏
+        User loginUser = userService.getLoginUser(request);
+        return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
     }
 
 }

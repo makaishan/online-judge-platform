@@ -1,4 +1,4 @@
-package com.mks.luooj.model.enums;
+package com.mks.luooj.codesandbox.model.enums;
 
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -7,22 +7,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 题目提交编程语言枚举
+ * 判题信息消息枚举
  *
  * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
  * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
-public enum QuestionSubmitLanguageEnum {
+public enum JudgeInfoMessageEnum {
 
-    JAVA("java", "java"),
-    CPLUSPLUS("cpp", "cpp"),
-    GOLANG("go", "go");
+    ACCEPTED("成功", "Accepted"),
+    WRONG_ANSWER("答案错误", "Wrong Answer"),
+    COMPILE_ERROR("编译错误", "Compile Error"),
+    MEMORY_LIMIT_EXCEEDED("内存溢出", "Memory Limit Exceeded"),
+    TIME_LIMIT_EXCEEDED("超时", "Time Limit Exceeded"),
+    PRESENTATION_ERROR("展示错误", "Presentation Error"),
+    WAITING("等待中", "Waiting"),
+    OUTPUT_LIMIT_EXCEEDED("输出溢出", "Output Limit Exceeded"),
+    DANGEROUS_OPERATION("危险操作", "Dangerous Operation"),
+    RUNTIME_ERROR("运行错误", "Runtime Error"),
+    SYSTEM_ERROR("系统错误", "System Error");
 
     private final String text;
 
     private final String value;
 
-    QuestionSubmitLanguageEnum(String text, String value) {
+    JudgeInfoMessageEnum(String text, String value) {
         this.text = text;
         this.value = value;
     }
@@ -30,7 +38,7 @@ public enum QuestionSubmitLanguageEnum {
     /**
      * 获取值列表
      *
-     * @return List<String>
+     * @return
      */
     public static List<String> getValues() {
         return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
@@ -39,14 +47,14 @@ public enum QuestionSubmitLanguageEnum {
     /**
      * 根据 value 获取枚举
      *
-     * @param value value
-     * @return QuestionSubmitLanguageEnum
+     * @param value
+     * @return
      */
-    public static QuestionSubmitLanguageEnum getEnumByValue(String value) {
+    public static JudgeInfoMessageEnum getEnumByValue(String value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (QuestionSubmitLanguageEnum anEnum : QuestionSubmitLanguageEnum.values()) {
+        for (JudgeInfoMessageEnum anEnum : JudgeInfoMessageEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }
