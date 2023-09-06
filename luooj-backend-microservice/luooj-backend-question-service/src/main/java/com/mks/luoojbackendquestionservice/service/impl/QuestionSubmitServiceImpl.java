@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mks.luoojbackendcommon.common.ErrorCode;
 import com.mks.luoojbackendcommon.constant.CommonConstant;
+import com.mks.luoojbackendcommon.constant.RabbitMQConstant;
 import com.mks.luoojbackendcommon.exception.BusinessException;
 import com.mks.luoojbackendcommon.utils.SqlUtils;
 import com.mks.luoojbackendmodel.model.dto.questionsubmit.QuestionSubmitAddRequest;
@@ -17,20 +18,17 @@ import com.mks.luoojbackendmodel.model.enums.QuestionSubmitLanguageEnum;
 import com.mks.luoojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.mks.luoojbackendmodel.model.vo.QuestionSubmitVO;
 import com.mks.luoojbackendquestionservice.mapper.QuestionSubmitMapper;
+import com.mks.luoojbackendquestionservice.rabbitmq.MQMessageProducer;
 import com.mks.luoojbackendquestionservice.service.QuestionService;
 import com.mks.luoojbackendquestionservice.service.QuestionSubmitService;
-import com.mks.luoojbackendserviceclient.service.JudgeFeignClient;
 import com.mks.luoojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +47,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private UserFeignClient userFeignClient;
 
     @Resource
-    @Lazy
-    private JudgeFeignClient judgeFeignClient;
+    private MQMessageProducer messageProducer;
 
     @Override
     public long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
@@ -81,8 +78,8 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "提交失败");
         }
         Long questionSubmitId = questionSubmit.getId();
-        // 异步调用判题服务区判题
-        CompletableFuture.runAsync(() -> judgeFeignClient.doJudge(questionSubmitId));
+        // 向消息队列发送消息
+        messageProducer.sendMessage(RabbitMQConstant.JUDGE_EXCHANGE_NAME, RabbitMQConstant.JUDGE_ROUTING_KEY, String.valueOf(questionSubmitId));
         return questionSubmitId;
     }
 

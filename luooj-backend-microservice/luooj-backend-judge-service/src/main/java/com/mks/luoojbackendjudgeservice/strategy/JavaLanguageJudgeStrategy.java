@@ -6,6 +6,7 @@ import com.mks.luoojbackendmodel.model.dto.question.JudgeCase;
 import com.mks.luoojbackendmodel.model.dto.question.JudgeConfig;
 import com.mks.luoojbackendmodel.model.entity.Question;
 import com.mks.luoojbackendmodel.model.enums.JudgeInfoMessageEnum;
+import org.apache.commons.lang3.StringUtils;
 
 
 import java.util.List;
@@ -30,13 +31,13 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
         judgeInfoResponse.setMemory(memory);
         judgeInfoResponse.setTime(time);
         // 判断程序是否编译成功
-        if(message.equals(JudgeInfoMessageEnum.COMPILE_ERROR.getValue())){
+        if (StringUtils.isNotBlank(message) && message.equals(JudgeInfoMessageEnum.COMPILE_ERROR.getValue())) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.COMPILE_ERROR;
             judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
             return judgeInfoResponse;
         }
         // 判断程序是否运行成功
-        if(message.equals(JudgeInfoMessageEnum.RUNTIME_ERROR.getValue())){
+        if (StringUtils.isNotBlank(message) && message.equals(JudgeInfoMessageEnum.RUNTIME_ERROR.getValue())) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.RUNTIME_ERROR;
             judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
             return judgeInfoResponse;
