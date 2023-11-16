@@ -29,7 +29,7 @@
         {{ store.state.user?.loginUser?.userName }}
       </div>
       <div v-else-if="store.state.user?.loginUser != null" @click="toLogin">
-        个人中心
+        用户{{ store.state.user?.loginUser?.userAccount }}
       </div>
       <div v-else @click="toLogin">未登录</div>
     </a-col>

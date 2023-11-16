@@ -3,10 +3,7 @@ package com.mks.luoojbackendserviceclient.service;
 import com.mks.luoojbackendmodel.model.entity.Question;
 import com.mks.luoojbackendmodel.model.entity.QuestionSubmit;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -24,6 +21,9 @@ public interface QuestionFeignClient {
      */
     @GetMapping("/get/id")
     Question getQuestionById(@RequestParam("questionId") long questionId);
+
+    @PostMapping("/question/update")
+    boolean updateQuestionById(@RequestBody Question question);
 
     /**
      * 根据题目提交id获取题目提交

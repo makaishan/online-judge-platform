@@ -1,6 +1,7 @@
-package com.mks.luooj.codesandbox;
+package com.mks.luooj.codesandbox.impl.template;
 
 import cn.hutool.core.io.FileUtil;
+import com.mks.luooj.codesandbox.CodeSandbox;
 import com.mks.luooj.codesandbox.model.entity.ExecuteCodeRequest;
 import com.mks.luooj.codesandbox.model.entity.ExecuteCodeResponse;
 import com.mks.luooj.codesandbox.model.entity.ExecuteMessage;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @Component
 public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
 
-    public static final String GLOBAL_CODE_DIR_NAME = "tmpCode";
+    public static final String GLOBAL_CODE_DIR_NAME = "javaCode";
     public static final String GLOBAL_JAVA_CLASS_NAME = "Main.java";
     public static final long TIME_OUT = 5000;
 
@@ -125,7 +126,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
                         throw new RuntimeException(e);
                     }
                 }).start();
-                ExecuteMessage executeMessage = ProcessUtil.runProcessAndGetMessage(runProcess, "运行");
+                ExecuteMessage executeMessage = ProcessUtil.runInteractionProcessAndGetMessage(runProcess, input);
                 executeMessageList.add(executeMessage);
                 System.out.println(executeMessage);
             } catch (Exception e) {
@@ -148,21 +149,21 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         long maxMemory = 0L;
         for (ExecuteMessage executeMessage : executeMessageList) {
             String errorMessage = executeMessage.getErrorMessage();
-            if(StringUtils.isNotBlank(errorMessage)){
+            if (StringUtils.isNotBlank(errorMessage)) {
                 executeCodeResponse.setMessage(errorMessage);
                 executeCodeResponse.setStatus(3);
             }
             outputList.add(executeMessage.getMessage());
             Long time = executeMessage.getTime();
             Long memory = executeMessage.getMemory();
-            if(time != null) {
+            if (time != null) {
                 maxTime = Math.max(maxTime, time);
             }
-            if(memory != null) {
+            if (memory != null) {
                 maxMemory = Math.max(maxMemory, memory);
             }
         }
-        if(outputList.size() == executeMessageList.size()) {
+        if (outputList.size() == executeMessageList.size()) {
             executeCodeResponse.setStatus(1);
         }
         executeCodeResponse.setOutputList(outputList);

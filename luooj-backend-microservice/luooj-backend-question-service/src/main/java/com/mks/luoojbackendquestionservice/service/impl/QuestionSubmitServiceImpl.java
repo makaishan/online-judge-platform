@@ -26,6 +26,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +53,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Override
     public long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
         // 判断实体是否存在，根据类别获取实体
-         Long questionId = questionSubmitAddRequest.getQuestionId();
+        Long questionId = questionSubmitAddRequest.getQuestionId();
         Question question = questionService.getById(questionId);
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
